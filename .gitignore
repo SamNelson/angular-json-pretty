@@ -6,3 +6,8 @@ bower/
 demo/bower/
 demo/angular-json-pretty.css
 demo/angular-json-pretty.js
+demo/JSONbig.js
+
+#intellij
+.idea
+*.iml

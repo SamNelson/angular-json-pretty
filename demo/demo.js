@@ -11,6 +11,9 @@ demo.controller('DemoController', function($scope) {
         }, {
             name: 'Golden section',
             data: [1, 1.618, 2.618, 4.236, 6.854, 11.09]
+        }, {
+            name: 'Big int',
+            data: [9223372036854775807]
         }]
     };
 

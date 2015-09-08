@@ -43,9 +43,9 @@
         var prettyJson;
         try {
             if (typeof obj === 'string') {
-                jsonObj = JSON.parse(obj);
+                jsonObj = JSONbig.parse(obj);
             }
-            return JSON.stringify(jsonObj, null, 3)
+            return JSONbig.stringify(jsonObj, null, 3)
                 .replace(/&/g, '&amp;').replace(/\\"/g, '&quot;')
                 .replace(/</g, '&lt;').replace(/>/g, '&gt;')
                 .replace(jsonLine, replacer);

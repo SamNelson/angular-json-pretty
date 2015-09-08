@@ -8,6 +8,7 @@ var less = function(dest, isProduction) {
     var prefix = require('gulp-autoprefixer');
     var rename = require('gulp-rename');
     var sourcemap = require('gulp-sourcemaps');
+
     return gulp.src('src/angular-json-pretty.less')
         .pipe(sourcemap.init())
         .pipe(less({
@@ -23,6 +24,34 @@ var less = function(dest, isProduction) {
         }))
         .pipe(gulp.dest(dest));
 };
+
+var bundle = function(dest, isProduction) {
+    var browserify = require('browserify');
+    var gulp = require('gulp');
+    var gutil = require('gulp-util');
+    var rename = require('gulp-rename');
+    var uglify = require('gulp-uglify');
+    var sourcemaps = require('gulp-sourcemaps');
+    var source = require('vinyl-source-stream');
+    var buffer = require('vinyl-buffer');
+
+    var b= browserify({
+        entries: './src/JSONbig.js',
+        debug: !isProduction
+    });
+
+    return b.bundle()
+        .pipe(source('JSONbig.js'))
+        .pipe(buffer())
+        .pipe(sourcemaps.init({loadMaps: true}))
+        .pipe(uglify())
+            .on('error', gutil.log)
+        .pipe(sourcemaps.write())
+        //.pipe(rename({
+        //    basename: 'JSONbig-min'
+        //}))
+        .pipe(gulp.dest(dest));
+}
 
 gulp.task('lessDemo', function() {
     return less('demo/', false);
@@ -42,7 +71,15 @@ gulp.task('copyDist', function() {
         .pipe(gulp.dest('./dist/'));
 });
 
-gulp.task('demo', ['lessDemo', 'copyDemo'], function() {
+gulp.task('bundleJsonbigDemo', function() {
+    return bundle('demo/', false);
+});
+
+gulp.task('bundleJsonbigDist', function() {
+    return bundle('dist/', true);
+});
+
+gulp.task('demo', ['lessDemo', 'copyDemo', 'bundleJsonbigDemo'], function() {
     var webserver = require('gulp-webserver');
     gulp.src('demo/')
         .pipe(webserver({
@@ -54,8 +91,7 @@ gulp.task('demo', ['lessDemo', 'copyDemo'], function() {
         }));
 });
 
-
-gulp.task('dist', ['lessDist', 'copyDist'], function() {
+gulp.task('dist', ['lessDist', 'copyDist', 'bundleJsonbigDist'], function() {
     var uglify = require('gulp-uglify');
     var sourcemaps = require('gulp-sourcemaps');
     var rename = require('gulp-rename');
@@ -71,3 +107,4 @@ gulp.task('dist', ['lessDist', 'copyDist'], function() {
         }))
         .pipe(gulp.dest('./dist/'));
 });
+
